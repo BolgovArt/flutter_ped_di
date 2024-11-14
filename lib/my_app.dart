@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ped_di/example_view_model.dart';
 import 'package:flutter_ped_di/example_widget.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,8 +13,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ExampleWidget(mode: ExampleWidgetModel.calc),
+      home: const ExampleWidget(model: ExamplePetViewModel(),), // 3. Внедрить абстрактный класс ExampleWidgetModel мы не
+      // можем, поэтому внедряем ExamplePetViewModel или ExampleCalcViewModel.
     );
   }
 }
-
