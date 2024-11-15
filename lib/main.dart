@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ped_di/calculator_service.dart';
-import 'package:flutter_ped_di/example_view_model.dart';
-import 'package:flutter_ped_di/my_app.dart';
-import 'package:flutter_ped_di/summator.dart';
-import 'example_widget.dart';
+import 'package:flutter_ped_di/factories/di_container.dart';
+
+// 2. Можно сделать так, чтобы DIContainer вообще нигде в приложении было не видно. Для этого сделаем его приватным в di_container.dart --> [1]
+// А также создадим абстрактный класс тут, имплементируемся от него в --> [2]
+abstract class MainDIContainer {
+  Widget makeApp(); // берем последнее поле в _DIContainer
+} 
+
+// 1. можем создать один единственный DI сервис на всё приложение
+// final diContainer = DIContainer();
+// UPD после шага 2: теперь DI сервис создается через глобальную функцию
+final diContainer = makeDIContainer();
 
 void main() {
-  const summator = Summator();
-  const calculatorService = CalculatorService(summator);
-  const exampleCalcViewModel = ExampleCalcViewModel(calculatorService);
-  const exampleWidget = ExampleWidget(model: exampleCalcViewModel);
-  runApp(const MyApp(widget: exampleWidget));
+  final app = diContainer.makeApp();
+  runApp(app);
 }
 
-// p.s. зависимость приходит теперь сверху, в случае чего мы можем ее подменить. Можно запихнуть другую модель (ExamplePetViewModel или какие-то тесты).
-// Сборка отовсюду ушла: calculatorService не знает как собирать summator, он просто туда приходит. exampleCalcViewModel не знает как собирать calculatorService. exampleWidget
-// не знает как собирается exampleCalcViewModel. MyApp не знает как собиарть exampleWidget, он также приходит сам.
-// В main.dart все это хранить не очень хорошо, поэтому следующим коммитом все это переедет в файл di_container.dart
+// Итого main.dart зависит только от одной функции makeDIContainer(). Но какой контейнер он возвращает main.dart не знает
+
