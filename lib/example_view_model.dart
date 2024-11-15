@@ -1,9 +1,11 @@
 import 'package:flutter_ped_di/calculator_service.dart';
 import 'package:flutter_ped_di/example_widget.dart';
 
-class ExampleCalcViewModel implements ExampleWidgetModel{ // 2. Имплементируемся от модели
-  final calculatorService = const CalculatorService();
-  const ExampleCalcViewModel();
+class ExampleCalcViewModel implements ExampleWidgetModel{
+  final CalculatorService calculatorService;
+
+  const ExampleCalcViewModel(this.calculatorService);
+
 
   void onPressMe() {
     final result = calculatorService.calculate(1, 2, CalculatorServiceOperation.summ);

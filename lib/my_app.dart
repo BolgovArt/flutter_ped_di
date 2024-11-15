@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ped_di/example_view_model.dart';
-import 'package:flutter_ped_di/example_widget.dart';
+// import 'package:flutter_ped_di/example_view_model.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // final ExampleCalcViewModel viewModel;
+  final Widget widget;
+
+  // const MyApp({super.key, required this.viewModel});
+  const MyApp({super.key, required this.widget});
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +16,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ExampleWidget(model: ExamplePetViewModel(),), // 3. Внедрить абстрактный класс ExampleWidgetModel мы не
-      // можем, поэтому внедряем ExamplePetViewModel или ExampleCalcViewModel.
+      // home: const ExampleWidget(model: ExamplePetViewModel(),),
+      // home: ExampleWidget(model: viewModel),
+      home: widget,
     );
   }
 }
+  // {
+  //   final summator = Summator();
+  //   calculatorService = CalculatorService(summator);
+  // }

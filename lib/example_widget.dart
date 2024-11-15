@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// 1. Добавили абстрактный класс
 abstract class ExampleWidgetModel {
   void onPressMe();
   void onPressMe2();
@@ -8,8 +7,6 @@ abstract class ExampleWidgetModel {
 
 class ExampleWidget extends StatelessWidget {
   final ExampleWidgetModel model;
-  // final calcModel = const ExampleCalcViewModel();
-  // final petModel = const ExamplePetViewModel();
   const ExampleWidget({super.key, required this.model});
 
   @override
@@ -42,10 +39,3 @@ class ExampleWidget extends StatelessWidget {
   }
 }
 
-// мы можем не знать, сколько у нас может быть моделей.
-// итог коммита: нам теперь не нужно тянуть все модели. Появился абстрактный класс с перечислением методов модели, что 
-// уменьшило код в верстке (нету ифов). Также нету модов (хотя все ещё в my_app передается модель ручками)
-// ExampleWidget перестал зависеть от моделей напрямую, + они перестали создаваться внутри виджета, 
-// теперь они приходят через конструктор. 
-// Схематично поменялись стрелочки (из видео 101 урок) - IoC - Inversion of Control
-// my_app.dart теперь внедряет example_view_model в конструктор ExampleWidget - внедрение зависимости.
