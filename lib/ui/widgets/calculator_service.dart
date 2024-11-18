@@ -1,10 +1,11 @@
+import 'package:flutter_ped_di/factories/di_container.dart';
 import 'package:flutter_ped_di/ui/widgets/summator.dart';
 
 enum CalculatorServiceOperation {summ}
 
 class CalculatorService {
-  final Summator summator;
-  const CalculatorService(this.summator);
+  final Summator summator = ServiceLocator.instance.makeSummator();
+  CalculatorService();
 
   int calculate(int a, int b, CalculatorServiceOperation operation) {
     if (operation == CalculatorServiceOperation.summ) {

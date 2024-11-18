@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ped_di/factories/di_container.dart';
 import 'package:flutter_ped_di/ui/widgets/my_app.dart';
 
 class MainNavigationRouteNames {
   static const example = '/';
 }
 
-abstract class ScreenFactory {
-  Widget makeExampleScreen();
-} 
 
 class MainNavigationDefault implements MainNavigation {
-  final ScreenFactory screenFactory;
-  const MainNavigationDefault(this.screenFactory);
+  const MainNavigationDefault();
   @override
   Map<String, Widget Function(BuildContext)> makeRoutes() => 
     <String, Widget Function(BuildContext)>{
-      MainNavigationRouteNames.example: (_) => screenFactory.makeExampleScreen()
+      MainNavigationRouteNames.example: (_) => ServiceLocator.instance.makeExampleScreen()
     };
 
    @override
