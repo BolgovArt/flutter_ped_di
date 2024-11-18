@@ -1,4 +1,4 @@
-import 'package:flutter_ped_di/summator.dart';
+import 'package:flutter_ped_di/ui/widgets/summator.dart';
 
 enum CalculatorServiceOperation {summ}
 

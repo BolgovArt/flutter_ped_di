@@ -1,44 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ped_di/calculator_service.dart';
-import 'package:flutter_ped_di/example_view_model.dart';
-import 'package:flutter_ped_di/example_widget.dart';
+import 'package:flutter_ped_di/main_navigation.dart';
+import 'package:flutter_ped_di/ui/widgets/calculator_service.dart';
+import 'package:flutter_ped_di/ui/widgets/example_view_model.dart';
+import 'package:flutter_ped_di/ui/widgets/example_widget.dart';
 import 'package:flutter_ped_di/main.dart';
-import 'package:flutter_ped_di/my_app.dart';
-import 'package:flutter_ped_di/summator.dart';
+import 'package:flutter_ped_di/ui/widgets/my_app.dart';
+import 'package:flutter_ped_di/ui/widgets/summator.dart';
 
-// ------------------------------------------------------------------------------Часть 1--------------------------------------------------------------------------------------------
-// class DIContainer {
-//   late final Summator _summator;
-//   CalculatorService _makeCalculatorService() => CalculatorService(_summator); // 2. а _makeCalculatorService эт функция, создающая CalculatorService на основе хранимого значения
-
-//   // пусть сервис создается тогда, когда он непосредственно потребуется
-//   // перечислять все поля как это сделано ниже не очень хорошо
-//   // late final CalculatorService calculatorService;
-//   // late final ExampleCalcViewModel exampleCalcViewModel;
-//   // late final ExampleWidget exampleWidget;
-
-//   DIContainer() {
-//     _summator = Summator(); // 1. Сумматор создается в самом начале DIContainer. Это хранимое свойство, кто бы его не запросил (_makeCalculatorService и тд)
-
-//   //   calculatorService = CalculatorService(summator);
-//   //   exampleCalcViewModel = ExampleCalcViewModel(calculatorService);
-//   //   exampleWidget = ExampleWidget(model: exampleCalcViewModel);
-//   }
-// }
-// 3. хранить сумматор в данном примере не нужно, поэтому перепишем
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-// [1]: к приватному _DIContainer допишем глобальную функцию makeDIContainer
 MainDIContainer makeDIContainer() => _DIContainer();
-class _DIContainer implements MainDIContainer{ // [2]
+
+class _DIContainer implements MainDIContainer, ScreenFactory {
+  late final MainNavigationDefault _mainNavigation;
   Summator _makeSummator() => Summator();
   CalculatorService _makeCalculatorService() => CalculatorService(_makeSummator());
   ExampleWidgetModel _makeExampleWidgetModel() => ExampleCalcViewModel(_makeCalculatorService());
-  Widget _makeExampleWidget() => ExampleWidget(model: _makeExampleWidgetModel());
-  Widget makeApp() => MyApp(widget: _makeExampleWidget());
+  @override
+  Widget makeExampleScreen() => ExampleWidget(model: _makeExampleWidgetModel());
+  @override
+  Widget makeApp() => MyApp(mainNavigation: _mainNavigation);
 
-  _DIContainer();
+  _DIContainer(){
+    _mainNavigation = MainNavigationDefault(this);
+  }
 }
 
 

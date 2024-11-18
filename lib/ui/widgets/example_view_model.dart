@@ -1,5 +1,5 @@
-import 'package:flutter_ped_di/calculator_service.dart';
-import 'package:flutter_ped_di/example_widget.dart';
+import 'package:flutter_ped_di/ui/widgets/calculator_service.dart';
+import 'package:flutter_ped_di/ui/widgets/example_widget.dart';
 
 class ExampleCalcViewModel implements ExampleWidgetModel{
   final CalculatorService calculatorService;
