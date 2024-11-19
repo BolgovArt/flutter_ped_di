@@ -7,58 +7,59 @@ import 'package:flutter_ped_di/ui/widgets/example_widget.dart';
 import 'package:flutter_ped_di/ui/widgets/my_app.dart';
 import 'package:flutter_ped_di/ui/widgets/summator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// В getIt зависимости нужно регистрировать, ранее мы сами ручками их описывали.
-// перепишем последовательно все старые зависимости. Для 
 void setupGetIt() {
-  // [3] *следующая строчка* :
-  GetIt.instance.registerSingleton<ScreenFactory>(const ScreenFactoryDefault());
-  GetIt.instance.registerSingleton<MainNavigation>(MainNavigationDefault()); // регистрируем MainNavigationDefault, но по идее у него должен быть тип MainNavigation, 
-                                                                             // приложение не должно ничего знать про MainNavigationDefault
-  GetIt.instance.registerFactory<Summator>(() => const Summator());
- 
-   // 4.4
-  GetIt.instance.registerSingleton<AppFactory>(const AppFactoryDefault()); // почему-то в видосе он эту зависимость положил выше
+  // GetIt.instance.registerSingletonAsync<SharedPreferences>(SharedPreferences.getInstance); // добавлена ассинхронщина. 1 cпособ
+  // GetIt.instance.registerLazySingleton<ScreenFactory>(() => ScreenFactoryDefault());
+  // .. MainNavigationDefault ...
+        //   GetIt.instance.registerSingleton<MainNavigation>(MainNavigationDefault());
+        //   GetIt.instance.registerFactory<Summator>(() => const Summator());
+        //   GetIt.instance.registerSingleton<AppFactory>(const AppFactoryDefault());
+        //   GetIt.instance.registerFactory<CalculatorService>(() => CalculatorService());
+        //   GetIt.instance.registerFactory<ExampleWidgetModel>(() => ExampleCalcViewModel());
 
+//  2 способ с зависящими друг от друга синглтонами
+  GetIt.instance.registerSingletonAsync<SharedPreferences>(SharedPreferences.getInstance); // 2 cпособ. Например нужен SharedPreferences на старте, но все в этой цепочке становится //! строчка 1.
+              // ассинхронным, тк сам SharedPreferences ассинхронный и тянет за собой ScreenFactory и MainNavigation, которые должны быть синхронными. //! строчка 2.
+              // На старте приложения сразу нужен будет MainNavigation (для основного виджета MyApp), но он ещё не будет готов. Для этого дополним код в main.dart [1] //! строчка 3.
+  GetIt.instance.registerSingletonWithDependencies<ScreenFactory>(() => ScreenFactoryDefault(), dependsOn: [SharedPreferences]);
+  GetIt.instance.registerSingletonWithDependencies<MainNavigation>(() => MainNavigationDefault(), dependsOn: [ScreenFactory]);
+  GetIt.instance.registerFactory<Summator>(() => const Summator());
+  GetIt.instance.registerFactory<AppFactory>(() => const AppFactoryDefault());
   GetIt.instance.registerFactory<CalculatorService>(() => CalculatorService());
   GetIt.instance.registerFactory<ExampleWidgetModel>(() => ExampleCalcViewModel());
-  // makeExampleScreen и makeApp оба типа Widget, код ниже - ошибка, так делать нельзя
-  // GetIt.instance.registerFactory<Widget>(() => ExampleWidget());
-  // GetIt.instance.registerFactory<Widget>(() => MyApp());
-  // обойти это тоже нельзя, поэтому создаем фабрику. --> [1]
-  // ...
-  // 4.1 Для myApp аналогично делаем абстрактный класс в main.dart
-
-
 }
 
-// --------------------------------------------------  Старый код  -------------------------------------------------------------
-// class ServiceLocator {
-//   static final instance = ServiceLocator._();
-//   ServiceLocator._();
-//   final MainNavigation mainNavigation = MainNavigationDefault(); //! mainNavigation - это синглтон
-//   Summator makeSummator() => const Summator();
-//   CalculatorService makeCalculatorService() => CalculatorService();
-//   ExampleWidgetModel makeExampleWidgetModel() => ExampleCalcViewModel();
-//   Widget makeExampleScreen() => ExampleWidget();
-//   Widget makeApp() => MyApp(); //! MyApp зависит от mainNavigation (в di_container.dart этого явно не видно). MyApp тоже синглтон
-// }
-// ---------------------------------------------------------------------------------------------------------------------------
+// 1 способ ассинхронщины
+// class ScreenFactoryDefault implements ScreenFactory {
+//   ScreenFactoryDefault(){
+//     setup(); 
+//   }
 
+//   Future<void> setup() async {
+//     final storage = await GetIt.instance.getAsync<SharedPreferences>();
+//     storage.setBool("key", true);
+//   }
 
-// [2]:
+// 2 способ ассинхронщины
 class ScreenFactoryDefault implements ScreenFactory {
-  const ScreenFactoryDefault();
+  ScreenFactoryDefault(){
+    setup();
+  }
+
+  Future<void> setup() async {
+    final storage = await GetIt.instance<SharedPreferences>(); // p.s. нет .getAsync в сравнении с 1 способом
+    storage.setBool("key", true);
+  }
+
+
   @override
   Widget makeExampleScreen() => ExampleWidget();
-} // .. тогда мы можем зарегистрировать ScreenFactory, которая будет создавать эти виджеты --> [3]. Она должна быть синглтоном и должна регистрироваться до mainNavigator,
-// потому что будет к нему обращаться
+} 
 
-
-// 4.3
 class AppFactoryDefault implements AppFactory {
   const AppFactoryDefault();
   @override
   Widget makeApp() => MyApp();
 }
-
