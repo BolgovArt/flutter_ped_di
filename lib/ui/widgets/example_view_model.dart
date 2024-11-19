@@ -1,9 +1,11 @@
-import 'package:flutter_ped_di/factories/di_container.dart';
+// import 'package:flutter_ped_di/factories/di_container.dart';
 import 'package:flutter_ped_di/ui/widgets/calculator_service.dart';
 import 'package:flutter_ped_di/ui/widgets/example_widget.dart';
+import 'package:get_it/get_it.dart';
 
 class ExampleCalcViewModel implements ExampleWidgetModel{
-  final CalculatorService calculatorService = ServiceLocator.instance.makeCalculatorService();
+  final calculatorService = GetIt.instance<CalculatorService>();
+  // final CalculatorService calculatorService = ServiceLocator.instance.makeCalculatorService();
 
   ExampleCalcViewModel();
 

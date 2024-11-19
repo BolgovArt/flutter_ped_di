@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ped_di/factories/di_container.dart';
+// import 'package:flutter_ped_di/factories/di_container.dart';
 import 'package:flutter_ped_di/ui/widgets/example_view_model.dart';
 import 'package:flutter_ped_di/ui/widgets/example_widget.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 abstract class MainNavigation {
@@ -11,14 +12,14 @@ abstract class MainNavigation {
 
 class MyApp extends StatelessWidget {
 
-  final mainNavigation = ServiceLocator.instance.mainNavigation; // [2]
+  final mainNavigation = GetIt.instance<MainNavigation>();
+  // final mainNavigation = ServiceLocator.instance.mainNavigation;
   MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Provider<ExampleWidgetModel>( // внедряем ExampleCalcViewModel как абстрактный класс ExampleWidgetModel. ExampleCalcViewModel - реализация абстрактного класса теперь. 
-      create: (_) => ExampleCalcViewModel(), // 1. регистрируем зависимость вьюМодели в дереве 
-      // create: (_) => ExamplePetViewModel(), // все равно будет работать
+    return Provider<ExampleWidgetModel>(
+      create: (_) => ExampleCalcViewModel(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
